@@ -1,68 +1,134 @@
-const {leerArchivo, escribirArchivo} = require('./../utils/archivo');
+const { todo: { 
+        validarCampos, 
+        validarID, 
+        crear, 
+        buscarTodos, 
+        buscarUno, 
+        actualizar, 
+        eliminar } } = require('../services');
+        
+const crearTodo = (req, res) => {
+    let respuestaServicio = {
+        informacion: {
+            status: 201,
+            mensaje: "Todo creado correctamente"
+        },
+        data: {
+            todo: []
+        }
+    };
 
-const controlador = {}
+    const camposLLenos = validarCampos(req.body);
 
-controlador.verTodos = (req, res) => {  
-    const todos = leerArchivo();
+    if (!camposLLenos) {
+        respuestaServicio.informacion.status = 400;
+        respuestaServicio.informacion.mensaje = "Todos los campos son obligatorios";
 
-    res.json(todos);
-}
-controlador.verTodo = (req, res) => {
-    const {id} = req.params;
-
-    const todos = leerArchivo();
-    const resultado = todos.find(todo => todo.id === id);
-    
-    res.json(resultado);
-}
-
-controlador.crearTodo = (req, res) => {
-    const {id, titulo, descripcion} = req.body;
-    
-    const nuevoTodo = {
-        id,
-        titulo,
-        descripcion
+        return res.status(400).json(respuestaServicio);
     }
 
-    const todos = leerArchivo();
-    const listaTodos = [...todos, nuevoTodo];
-    
-    escribirArchivo(listaTodos);
-    const todos2 = leerArchivo();
-    
-    res.json(todos2);
+    crear(req.body);
+
+    return res.status(201).json(respuestaServicio);
 }
 
-controlador.EliminandoTodo = (req, res) => {
-    const {id} = req.params;
-
-    const todos = leerArchivo();
-    const resultado = todos.filter(todo => todo.id !== id);
-
-    escribirArchivo(resultado);
-    const todos2 = leerArchivo();
-
-    res.json(todos2);
-}
-
-controlador.actualizarTodo = (req, res) => {
-    const {id} = req.params;
-
-    const todos = leerArchivo();
-    const resultado = todos.find(todo => todo.id === id);
-    
-    const nuevaListaTodos = todos.map(todo => {
-        if(todo.id === id) {
-            return {...resultado, ...(req.body)};
+const verTodos = (req, res) => {
+    let respuestaServicio = {
+        informacion: {
+            status: 200,
+            mensaje: "Lista de todos"
+        },
+        data: {
+            todo: []
         }
-        return todo;
-    });
+    };   
 
-    escribirArchivo(nuevaListaTodos);
-    const todos2 = leerArchivo();
+    respuestaServicio.data.todo = buscarTodos();
 
-    res.json(todos2);
+    return res.status(200).json(respuestaServicio);
 }
 
-module.exports = controlador;
+const verTodo = (req, res) => {
+    let respuestaServicio = {
+        informacion: {
+            status: 200,
+            mensaje: "Todo encontrado"
+        },
+        data: {
+            todo: []
+        }
+    };
+
+    const { id } = req.params;
+
+    if (!validarID(id)) {
+        respuestaServicio.informacion.status = 404;
+        respuestaServicio.informacion.mensaje = "ID no existe";
+
+        return res.status(404).json(respuestaServicio);
+    }
+
+    const todo = buscarUno(id);
+    respuestaServicio.data.todo = todo;
+
+    res.status(200).json(respuestaServicio);
+}
+
+const actualizarTodo = (req, res) => {
+    let respuestaServicio = {
+        informacion: {
+            status: 200,
+            mensaje: "Todo actualizado"
+        },
+        data: {
+            todo: []
+        }
+    };
+
+    const { id } = req.params;
+
+    if (!validarID(id)) {
+        respuestaServicio.informacion.status = 404;
+        respuestaServicio.informacion.mensaje = "ID no existe";
+
+        return res.status(404).json(respuestaServicio);
+    }
+
+    const todo = buscarUno(id);
+    actualizar(todo, req.body);
+
+    return res.status(200).json(respuestaServicio);
+}
+
+const EliminandoTodo = (req, res) => {
+    let respuestaServicio = {
+        informacion: {
+            status: 200,
+            mensaje: "Todo eliminado"
+        },
+        data: {
+            todo: []
+        }
+    };
+
+    const { id } = req.params;
+
+    if (!validarID(id)) {
+        respuestaServicio.informacion.status = 404;
+        respuestaServicio.informacion.mensaje = "ID no existe";
+
+        return res.status(404).json(respuestaServicio);
+    }
+
+    eliminar(id);
+
+    return res.status(200).json(respuestaServicio);
+}
+
+module.exports = {
+    crearTodo,
+    verTodos,
+    verTodo,
+    actualizarTodo,
+    EliminandoTodo
+};

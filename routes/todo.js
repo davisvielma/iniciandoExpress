@@ -1,12 +1,12 @@
 const {Router} = require('express');
 const router = Router();
 
-const {todo: {
+const { todo: {
     verTodos, 
     verTodo, 
     actualizarTodo, 
     crearTodo, 
-    EliminandoTodo}} = require('./../controllers');
+    EliminandoTodo} } = require('../controllers');
 
 router.get('/', verTodos);
 router.get('/:id', verTodo);

@@ -1,14 +1,13 @@
 const express = require('express');
-const bodyParse = require('body-parser');
 
 const app = express();
 
-app.use(bodyParse.urlencoded({extended: false}));
-app.use(bodyParse.json());
-
 app.set('port', 3000);
 
-app.use('/', require('./routers'));
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
+
+app.use('/', require('./routes'));
 
 app.listen(app.get('port'), () => {
     console.log(`Escuchando en el puerto ${app.get('port')}.`);
