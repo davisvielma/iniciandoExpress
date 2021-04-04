@@ -1,1 +1,17 @@
-[{"id":"1","titulo":"Todo 1","descripcion":"Este es mi primer Todo"},{"id":"2","titulo":"Todo 2","descripcion":"Este es mi segundo Todo"},{"id":"3","titulo":"Todo 3","descripcion":"Este es mi tercer Todo"}]
+[
+    {
+        "id": "1",
+        "titulo": "Todo 1",
+        "descripcion": "Este es mi primer Todo"
+    },
+    {
+        "id": "2",
+        "titulo": "Todo 2",
+        "descripcion": "Este es mi segundo Todo"
+    },
+    {
+        "id": "3",
+        "titulo": "Todo 3",
+        "descripcion": "Este es mi tercer Todo"
+    }
+]

@@ -1,7 +1,7 @@
 const {archivo: {leerArchivo, escribirArchivo}} = require('./../utils')
 
-const validarCampos = ({id, titulo, descripcion}) => {
-    return !(!id || !titulo || !descripcion) ? true : false;
+const validarCampos = ({titulo, descripcion}) => {
+    return !(!titulo || !descripcion) ? true : false;
 }
 
 const validarID = (id) => {
@@ -11,14 +11,17 @@ const validarID = (id) => {
     return valido;
 }
 
-const crear = ({id, titulo, descripcion}) => {
+const crear = ({titulo, descripcion}) => {
+    const todos = leerArchivo();
+    let ultimoId = todos[todos.length - 1].id;
+    ultimoId = (++ultimoId).toString();
+
     const nuevoTodo = {
-        id,
+        id: ultimoId,
         titulo,
         descripcion
     }
 
-    const todos = leerArchivo();
     const listaTodos = [...todos, nuevoTodo];
     escribirArchivo(listaTodos);
     
@@ -36,11 +39,16 @@ const buscarUno = (id) => {
     return todo;
 }
 
-const actualizar = (todoViejo, nuevosCuerpo) => {
+const actualizar = (todoViejo, {titulo, descripcion}) => {
     const todos = leerArchivo();
+
+    const camposActualizados = {};
+    if (titulo) camposActualizados.titulo = titulo;
+    if (descripcion) camposActualizados.descripcion = descripcion;
+
     const nuevaListaTodos = todos.map(todo => {
         if (todo.id === todoViejo.id ) {
-             return {...todoViejo, ...nuevosCuerpo}   
+             return {...todoViejo, ...camposActualizados};   
         }
 
         return todo;
